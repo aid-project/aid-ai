@@ -10,7 +10,7 @@
 
 ## 2. GAN 모델 찾기
 
-### 2-1. Pre-Trained GAN 모델 찾기 (5/27 수행. 미완성)
+### 2-1. Pre-Trained GAN 모델 찾기 (5/27 수행. 미완성) (mlmodel에서 tensorflow로의 변환은 실패일듯)
 
 ### 2-2. VGG16 마지막 계층 삭제 후 Cosine-similarity 이용한 추천 모델 만들기 (프로토타입 단계 이후 생각 - (2-1) 대체용)
 
