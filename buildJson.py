@@ -29,12 +29,15 @@ import cv2
 
 auth = OAuth1("10baf80743224b4d9c99efac2cf5e750",
               "93e81703890449c3a6d5e3d65a912c25")
-endPoint = "https://api.thenounproject.com/v2/icon/1"
+endPoint = "https://api.thenounproject.com/v2/icon/351"
 
 response = requests.get(endPoint, auth=auth)
 # print(response.content)
 
 json_data = json.loads(response.content)
+
+print(json_data)
+
 
 # thumbnail_url과 term 추출
 thumbnail_url = json_data['icon']['thumbnail_url']
@@ -57,7 +60,7 @@ image = Image.open(filename)
 image = image.convert("RGBA")
 background = Image.new("RGBA", image.size, (255, 255, 255))
 image = Image.alpha_composite(background, image)
-image.save(filename)
+image.save("./ImageFolder/" + filename)
 
 """
 buildJson.py 코드에서는 파일을 이름으로 저장하는 역할만 수행함.
