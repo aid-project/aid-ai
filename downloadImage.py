@@ -18,26 +18,33 @@ import cv2
 from PIL import Image
 
 # Image 정제 후 저장 ()
-def getImageData(json_File):
+def getImageData(json_File , strNum):
     if 'icon' in json_File and 'thumbnail_url' in json_File['icon']:
         thumbnail_url = json_File['icon']['thumbnail_url']
         term = json_File['icon']['term']
+        fileName = f"{term}.png"
     else:
+        thumbnail_url = None
+        fileName = None
         pass
     
-    fileName = f"{term}.png"
+    
     
     try:
-        urllib.request.urlretrieve(thumbnail_url, "./ImageFolder/" + fileName)
+        if thumbnail_url != None and fileName != None:
+            urllib.request.urlretrieve(thumbnail_url, "./ImageFolder/" + fileName)
+            print(strNum + "번째 이미지 다운 성공")
     except urllib.error.URLError:
-        print("이미지를 다운로드할 수 없습니다.")
+        print(strNum + "번째 이미지를 다운로드할 수 없습니다.")
         pass
-    
-    image = Image.open("./ImageFolder/" + fileName)
-    image = image.convert("RGBA")
-    background = Image.new("RGBA", image.size, (255, 255, 255))
-    image = Image.alpha_composite(background, image)
-    image.save("./ImageFolder/" + fileName)
+    if thumbnail_url != None and fileName != None:
+        image = Image.open("./ImageFolder/" + fileName)
+        image = image.convert("RGBA")
+        background = Image.new("RGBA", image.size, (255, 255, 255))
+        image = Image.alpha_composite(background, image)
+        image.save("./ImageFolder/" + fileName)
+        pass
+
 
 
 
@@ -55,24 +62,10 @@ for i in range(1,5):
     pass
 """
 
-"""
-333,334 다운 실패함
-
-Exception has occurred: KeyError
-'thumbnail_url'
-  File "C:\Users\gipsy\Desktop\JS\aid-ai\downloadImage.py", line 22, in getImageData
-    thumbnail_url = json_File['icon']['thumbnail_url']
-  File "C:\Users\gipsy\Desktop\JS\aid-ai\downloadImage.py", line 59, in <module>
-    getImageData(json.loads(response.content))
-KeyError: 'thumbnail_url'
 
 
-"""
-
-for i in range(335, 1000):
+for i in range(4000, 4500):
     endPoint = original + str(i)
     response = requests.get(endPoint, auth=auth)
-    
-    getImageData(json.loads(response.content))
-    print(str(i) + "다운 완료.")
+    getImageData(json.loads(response.content), str(i))
     pass
