@@ -19,6 +19,7 @@ from keras.applications.vgg16 import VGG16, preprocess_input
 from keras.models import Model
 from scipy.spatial.distance import cosine
 from sklearn.metrics.pairwise import cosine_similarity
+from PIL import Image
 
 # 이미지 디렉토리 경로
 image_directory = "./jpgImage(Transform)/"
@@ -35,6 +36,7 @@ image_files = os.listdir(image_directory)
 # 백엔드에서 모델을 불러올 때는 불러와서 compile 하고 해야함.
 model = load_model("./VGG16_model.h5")
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+#model.summary()
 
 # 이미지 특성 추출 함수
 def extract_features(image_path):
@@ -72,29 +74,45 @@ i = 0
 
 features_array = np.load("./features.npy")
 
-new_image_path = "./Wine.jpg"
+img_tear = Image.open("./tear.jpg")
+tearI = img_tear.resize((224,224))
+tearI.save("./resized_tear.jpg")
 
-new_features = extract_features(new_image_path)
+tear = "./resized_tear.jpg"
+
+acorn = "./Acorn.jpg"
+
+acorn_features = extract_features(acorn)
+tear_features = extract_features(tear)
 
 print("feature : " + str(features_array.shape))
-print("new : " + str(new_features.shape))
+print("acorn : " + str(acorn_features.shape))
+print("tear : " + str(tear_features.shape))
 
-new_features  = np.reshape(new_features, (1,100352))
+#new_features = np.reshape(new_features, (100352,))
 
-#similarities = []
+acorn_startTime = time.time()
 
-similarities = cosine_similarity(features_array, new_features)
 
-# for features in features_array:
-#     similarity = 1 - cosine(features, new_features)  # 코사인 유사도 계산
-#     similarities.append(similarity)
+similarities = []
+
+# similarities = cosine_similarity(features_array, new_features)
+
+for features in features_array:
+    similarity = 1 - cosine(features, tear_features)  # 코사인 유사도 계산
+    similarities.append(similarity)
 
 # 유사도가 높은 순으로 정렬하여 상위 5개 인덱스 가져오기
-top_indices = np.argsort(similarities.flatten())[::-1][:5]
+top_indices = np.argsort(np.array(similarities).flatten())[::-1][:5]
 
 # 유사도가 높은 이미지 파일명 출력
 for index in top_indices:
     print(image_files[index])
+    pass
+
+acorn_endTime = time.time()
+
+print("similarity time : " + str(acorn_endTime - acorn_startTime))
 
 # fea_li = []
 # fe = extract_features(new_image_path)
